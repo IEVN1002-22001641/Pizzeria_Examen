@@ -1,0 +1,106 @@
+<div class="bg-slate-900/95 backdrop-blur-xl border border-slate-800/80 rounded-3xl p-6 sm:p-8 shadow-2xl shadow-slate-950/50 text-slate-100 mt-6">
+  
+  <!-- Encabezado de la Sección -->
+  <div class="flex items-center justify-between pb-6 mb-6 border-b border-slate-800">
+    <div class="flex items-center space-x-3">
+      <div class="flex items-center justify-center w-10 h-10 rounded-xl bg-amber-500/10 text-amber-400 border border-amber-500/20 font-bold">
+        🛒
+      </div>
+      <div>
+        <h2 class="text-xl font-black tracking-tight text-white">2. Tabla Temporal de Detalle y Cierre de Venta</h2>
+        <p class="text-xs text-slate-400 font-medium">Revisa los artículos agregados antes de procesar el pago</p>
+      </div>
+    </div>
+    <span class="hidden sm:inline-flex px-3 py-1 text-xs font-semibold bg-blue-500/10 text-blue-400 border border-blue-500/20 rounded-full">
+      Paso 2 de 3
+    </span>
+  </div>
+  
+
+  <div class="overflow-x-auto rounded-2xl border border-slate-700/60 shadow-inner bg-slate-950/40">
+    <table class="min-w-full divide-y divide-slate-800">
+      
+      <!-- Cabecera de la Tabla -->
+      <thead class="bg-slate-800/80 text-slate-300">
+        <tr>
+          <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider">Cliente</th>
+          <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider">Tamaño</th>
+          <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider">Ingredientes</th>
+          <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider">Num. Pizzas</th>
+          <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider">SubTotal</th>
+          <th class="px-6 py-4 text-center text-xs font-bold uppercase tracking-wider">Acción</th>
+        </tr>
+      </thead>
+
+      <!-- Cuerpo de la Tabla -->
+      <tbody class="divide-y divide-slate-800/60 bg-slate-900/40">
+        
+        <tr *ngFor="let item of listaItems; let i = index" class="hover:bg-slate-800/50 transition-colors duration-150 group">
+          <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-white flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-amber-400"></span>
+            {{ item.nombre }}
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-300">
+            <span class="px-2.5 py-1 rounded-lg bg-slate-800 border border-slate-700 text-xs font-medium text-amber-300">
+              {{ item.detalle.tamano }}
+            </span>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-400 max-w-xs truncate">
+            {{ item.detalle.ingredientes || 'Sin ingredientes extra' }}
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-slate-200">
+            {{ item.detalle.num_pizzas }}
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm font-black text-emerald-400">
+            ${{ item.detalle.subtotal }}
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
+            <button (click)="quitarDetalle(i)" 
+                    class="inline-flex items-center gap-1.5 bg-red-500/10 text-red-400 hover:bg-red-500 hover:text-white px-3.5 py-1.5 rounded-xl border border-red-500/20 transition-all duration-200 shadow-sm text-xs font-semibold">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+              </svg>
+              Quitar
+            </button>
+          </td>
+        </tr>
+
+        <!-- Estado Vacío -->
+        <tr *ngIf="listaItems.length === 0">
+          <td colspan="6" class="px-6 py-12 text-center text-sm text-slate-400">
+            <div class="flex flex-col items-center justify-center space-y-3">
+              <div class="w-12 h-12 rounded-full bg-slate-800 flex items-center justify-center text-slate-500 border border-slate-700">
+                🍕
+              </div>
+              <p class="font-medium text-slate-300">No hay pizzas agregadas temporalmente.</p>
+              <p class="text-xs text-slate-500">Agrega productos desde el formulario superior para verlos listados aquí.</p>
+            </div>
+          </td>
+        </tr>
+
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Barra de Cierre y Total Acumulado -->
+  <div class="mt-6 flex flex-col sm:flex-row justify-between items-center gap-4 bg-slate-800/40 p-5 rounded-2xl border border-slate-700/50 backdrop-blur-sm">
+    <div class="flex items-center gap-3">
+      <div class="p-2.5 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+        💰
+      </div>
+      <div>
+        <span class="block text-xs font-medium text-slate-400 uppercase tracking-wider">Total Acumulado</span>
+        <span class="text-2xl font-black text-emerald-400">${{ totalGeneral }}</span>
+      </div>
+    </div>
+
+    <button (click)="terminarPedido()" 
+            class="w-full sm:w-auto flex items-center justify-center gap-2 bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-500 hover:to-emerald-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg shadow-emerald-950/50 hover:shadow-emerald-900/50 hover:scale-[1.01] active:scale-[0.99] transition-all duration-200">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+      </svg>
+      <span>Terminar Pedido</span>
+    </button>
+  </div>
+
+</div>

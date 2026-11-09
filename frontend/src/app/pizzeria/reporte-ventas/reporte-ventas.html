@@ -1,0 +1,119 @@
+<div class="bg-slate-900/95 backdrop-blur-xl border border-slate-800/80 rounded-3xl p-6 sm:p-8 shadow-2xl shadow-slate-950/50 text-slate-100 mt-6">
+  
+  <!-- Encabezado de la Sección -->
+  <div class="flex items-center justify-between pb-6 mb-6 border-b border-slate-800">
+    <div class="flex items-center space-x-3">
+      <div class="flex items-center justify-center w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-bold">
+        📊
+      </div>
+      <div>
+        <h2 class="text-xl font-black tracking-tight text-white">3. Consulta de Ventas Acumuladas</h2>
+        <p class="text-xs text-slate-400 font-medium">Analiza y filtra el historial de ventas por período</p>
+      </div>
+    </div>
+    <span class="hidden sm:inline-flex px-3 py-1 text-xs font-semibold bg-purple-500/10 text-purple-400 border border-purple-500/20 rounded-full">
+      Paso 3 de 3
+    </span>
+  </div>
+
+  <!-- Controles de Filtro -->
+  <div class="bg-slate-800/40 border border-slate-700/50 rounded-2xl p-5 mb-6 shadow-inner backdrop-blur-sm">
+    <div class="flex items-center gap-2 mb-4">
+      <svg class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path>
+      </svg>
+      <h3 class="text-xs font-bold uppercase tracking-wider text-slate-300">Filtros de Búsqueda</h3>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      
+      <!-- Selector de Tipo de Consulta -->
+      <div class="space-y-1.5">
+        <label class="block text-xs font-semibold text-slate-300">Filtrar por:</label>
+        <div class="relative">
+          <select [(ngModel)]="tipoConsulta" (change)="aplicarFiltro()" 
+                  class="block w-full bg-slate-900/90 text-slate-100 text-sm rounded-xl border border-slate-700/80 focus:border-amber-400 focus:ring-2 focus:ring-amber-400/20 p-3 transition-all duration-200 shadow-sm cursor-pointer">
+            <option value="dia" class="bg-slate-900 text-slate-100">Día de la semana</option>
+            <option value="mes" class="bg-slate-900 text-slate-100">Mes del año</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Selector Dinámico de Día o Mes -->
+      <div class="space-y-1.5">
+        <label class="block text-xs font-semibold text-slate-300">Seleccionar {{ tipoConsulta === 'dia' ? 'Día' : 'Mes' }}:</label>
+        
+        <div class="relative">
+          <!-- Select para Días -->
+          <select *ngIf="tipoConsulta === 'dia'" [(ngModel)]="filtroSeleccionado" (change)="aplicarFiltro()" 
+                  class="block w-full bg-slate-900/90 text-slate-100 text-sm rounded-xl border border-slate-700/80 focus:border-amber-400 focus:ring-2 focus:ring-amber-400/20 p-3 transition-all duration-200 shadow-sm capitalize cursor-pointer">
+            <option *ngFor="let dia of diasSemana" [value]="dia" class="bg-slate-900 text-slate-100 capitalize">{{ dia }}</option>
+          </select>
+
+          <!-- Select para Meses -->
+          <select *ngIf="tipoConsulta === 'mes'" [(ngModel)]="filtroSeleccionado" (change)="aplicarFiltro()" 
+                  class="block w-full bg-slate-900/90 text-slate-100 text-sm rounded-xl border border-slate-700/80 focus:border-amber-400 focus:ring-2 focus:ring-amber-400/20 p-3 transition-all duration-200 shadow-sm capitalize cursor-pointer">
+            <option *ngFor="let mes of mesesAnio" [value]="mes" class="bg-slate-900 text-slate-100 capitalize">{{ mes }}</option>
+          </select>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Resultados de Ventas (Contenedor Principal Estilizado) -->
+  <div class="bg-slate-800/30 p-6 rounded-2xl border border-slate-700/50 shadow-inner backdrop-blur-sm space-y-6">
+    
+    <!-- Título de Resultados -->
+    <div class="flex items-center justify-between pb-4 border-b border-slate-800">
+      <h3 class="text-base font-bold text-slate-200 capitalize flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-amber-400"></span>
+        Ventas del {{ tipoConsulta }}: 
+        <span class="text-amber-300 font-black uppercase tracking-wide">{{ filtroSeleccionado }}</span>
+      </h3>
+    </div>
+
+    <!-- Lista de Ventas Desglosadas por Cliente -->
+    <div class="space-y-2.5 bg-slate-900/60 p-4 rounded-xl border border-slate-800/80 shadow-sm">
+      
+      <div *ngFor="let pedido of pedidosFiltrados" class="flex justify-between items-center p-3 rounded-xl bg-slate-800/40 border border-slate-700/40 hover:border-slate-600 transition-all group">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-lg bg-red-500/10 text-red-400 border border-red-500/20 flex items-center justify-center font-bold text-xs">
+            👤
+          </div>
+          <span class="font-bold text-white text-sm">{{ pedido.nombre }}</span>
+        </div>
+        <span class="font-black text-emerald-400 text-sm px-3 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
+          total ${{ pedido.total_pedido }}
+        </span>
+      </div>
+      
+      <!-- Estado Vacío -->
+      <div *ngIf="pedidosFiltrados.length === 0" class="text-center py-8 text-slate-400">
+        <div class="flex flex-col items-center justify-center space-y-2">
+          <div class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-slate-500 border border-slate-700">
+            🔍
+          </div>
+          <p class="text-sm font-medium text-slate-300">No hay ventas registradas para este {{ tipoConsulta }}.</p>
+          <p class="text-xs text-slate-500">Prueba seleccionando otro período en los filtros superiores.</p>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Total General Acumulado -->
+    <div class="bg-slate-900/90 p-4 sm:p-5 rounded-2xl shadow-lg flex flex-col sm:flex-row justify-between items-center gap-3 border border-red-500/30 relative overflow-hidden">
+      <!-- Acento decorativo sutil -->
+      <div class="absolute left-0 top-0 bottom-0 w-1.5 bg-gradient-to-b from-red-500 to-amber-400"></div>
+
+      <span class="text-sm sm:text-base font-bold text-slate-200 capitalize">
+        Ventas totales del {{ tipoConsulta }}:
+      </span>
+      <span class="text-2xl font-black text-red-400 bg-red-500/10 px-4 py-1.5 rounded-xl border border-red-500/20 shadow-inner">
+        ${{ totalAcumulado }}
+      </span>
+    </div>
+
+  </div>
+
+</div>
